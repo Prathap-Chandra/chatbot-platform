@@ -36,10 +36,87 @@
 
 // export default ChatWindow;
 
+// // ChatWindow.jsx
+// import React, { useState, useEffect } from "react";
+// import Message from "./Message";
+// import ActionButton from "./ActionButton";
+// import MessageInput from "./MessageInput";
+
+// const ChatWindow = () => {
+//   const [messages, setMessages] = useState<
+//     {
+//       id: number;
+//       isUser: boolean;
+//       text: string;
+//       time: string;
+//       avatar: string;
+//     }[]
+//   >([]);
+
+//   useEffect(() => {
+//     // Simulate receiving a welcome message when the chat loads
+//     const welcomeMessage = {
+//       id: 1,
+//       isUser: false,
+//       text: "Welcome! How can I assist you today?",
+//       time: "09:00",
+//       avatar: "bot_avatar_url", // Replace with actual bot avatar URL
+//     };
+//     setMessages([welcomeMessage]);
+//   }, []);
+
+//   const handleSendMessage = (newMessage: string) => {
+//     const currentTime = new Date().toLocaleTimeString([], {
+//       hour: "2-digit",
+//       minute: "2-digit",
+//     });
+//     const message = {
+//       id: messages.length + 1,
+//       isUser: true,
+//       text: newMessage,
+//       time: currentTime,
+//       avatar: "user_avatar_url", // Replace with actual user avatar URL
+//     };
+//     setMessages([...messages, message]);
+//   };
+
+//   const handleActionClick = (actionText: string) => {
+//     // Here you can handle the click of the action button.
+//     // For example, you can send a message or perform other actions.
+//     handleSendMessage(actionText);
+//   };
+
+//   return (
+//     <div className="flex flex-col h-screen min-w-[600px] mx-auto border-x border-gray-300">
+//       <div className="flex-1 overflow-y-auto">
+//         {messages.map((message) => (
+//           <Message key={message.id} {...message} />
+//         ))}
+//         <div className="flex justify-around p-4">
+//           <ActionButton
+//             text="View Documents"
+//             onClick={() => handleActionClick("View Documents")}
+//           />
+//           <ActionButton
+//             text="Get Holiday Calendar"
+//             onClick={() => handleActionClick("Get Holiday Calendar")}
+//           />
+//           <ActionButton
+//             text="Check Payroll"
+//             onClick={() => handleActionClick("Check Payroll")}
+//           />
+//         </div>
+//       </div>
+//       <MessageInput onSendMessage={handleSendMessage} />
+//     </div>
+//   );
+// };
+
+// export default ChatWindow;
+
 // ChatWindow.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Message from "./Message";
-import ActionButton from "./ActionButton";
 import MessageInput from "./MessageInput";
 
 const ChatWindow = () => {
@@ -47,25 +124,30 @@ const ChatWindow = () => {
     {
       id: number;
       isUser: boolean;
-      text: string;
+      text: unknown;
       time: string;
       avatar: string;
     }[]
   >([]);
 
   useEffect(() => {
-    // Simulate receiving a welcome message when the chat loads
+    // Simulate receiving a welcome message with buttons when the chat loads
     const welcomeMessage = {
       id: 1,
       isUser: false,
       text: "Welcome! How can I assist you today?",
       time: "09:00",
       avatar: "bot_avatar_url", // Replace with actual bot avatar URL
+      action_buttons: [
+        { text: "View Documents", type: "postback" },
+        { text: "Get Holiday Calendar", type: "postback" },
+        { text: "Check Payroll", type: "postback" },
+      ],
     };
     setMessages([welcomeMessage]);
   }, []);
 
-  const handleSendMessage = (newMessage: string) => {
+  const handleSendMessage = (newMessage: unknown) => {
     const currentTime = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
@@ -80,32 +162,30 @@ const ChatWindow = () => {
     setMessages([...messages, message]);
   };
 
-  const handleActionClick = (actionText: string) => {
-    // Here you can handle the click of the action button.
-    // For example, you can send a message or perform other actions.
-    handleSendMessage(actionText);
+  const handleActionButtonClick = (button: {
+    type: string;
+    text: string;
+    url: string | URL | undefined;
+  }) => {
+    if (button.type === "postback") {
+      // Handle the postback action here
+      handleSendMessage(button.text);
+    } else if (button.type === "web_url") {
+      // Open the URL in a new window/tab if it is a 'web_url' type
+      window.open(button.url, "_blank");
+    }
   };
 
   return (
     <div className="flex flex-col h-screen min-w-[600px] mx-auto border-x border-gray-300">
       <div className="flex-1 overflow-y-auto">
         {messages.map((message) => (
-          <Message key={message.id} {...message} />
+          <Message
+            key={message.id}
+            onActionButtonClick={handleActionButtonClick}
+            {...message}
+          />
         ))}
-        <div className="flex justify-around p-4">
-          <ActionButton
-            text="View Documents"
-            onClick={() => handleActionClick("View Documents")}
-          />
-          <ActionButton
-            text="Get Holiday Calendar"
-            onClick={() => handleActionClick("Get Holiday Calendar")}
-          />
-          <ActionButton
-            text="Check Payroll"
-            onClick={() => handleActionClick("Check Payroll")}
-          />
-        </div>
       </div>
       <MessageInput onSendMessage={handleSendMessage} />
     </div>
