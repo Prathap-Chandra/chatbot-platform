@@ -1,0 +1,19 @@
+/* styles.css */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Adjust based on your layout */
+  }
+  
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  
+  .input-area {
+    display: flex;
+    padding: 10px;
+    background: #f0f0f0;
+  }
+  
