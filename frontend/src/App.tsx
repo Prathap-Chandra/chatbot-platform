@@ -1,59 +1,68 @@
-// import React, { useState } from "react";
-// import Message from "./components/custom/Message";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import gptLogo from "@/assets/images/gpt-logo.png";
+import userLogo from "@/assets/images/user.png";
 
-// interface Message {
-//   id: number;
-//   text: string;
-// }
+export default function Component() {
+  // Generate sample messages for demonstration
+  const messages = Array.from({ length: 15 }, (_, index) => ({
+    id: index,
+    text: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia facilis dicta quis, laboriosam perferendis in?   ${index + 1}`,
+    isUser: index % 2 === 0,
+  }));
 
-// const App = () => {
-//   const [messages, setMessages] = useState<Message[]>([]);
-//   const [inputValue, setInputValue] = useState("");
-
-//   const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     if (!inputValue.trim()) return;
-//     setMessages([...messages, { id: messages.length + 1, text: inputValue }]);
-//     setInputValue("");
-//   };
-
-//   return (
-//     <div className="p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg">
-//       <div className="mb-4 h-64 overflow-y-auto">
-//         {messages.map((message) => (
-//           <Message key={message.id} text={message.text} isUser={false} time={""} avatar={""} />
-//         ))}
-//       </div>
-//       <form className="flex" onSubmit={sendMessage}>
-//         <input
-//           className="flex-1 p-2 border-2 border-gray-200 rounded-l-lg"
-//           type="text"
-//           placeholder="Type a message..."
-//           value={inputValue}
-//           onChange={(e) => setInputValue(e.target.value)}
-//         />
-//         <button
-//           className="px-4 bg-blue-500 text-white rounded-r-lg"
-//           type="submit"
-//         >
-//           Send
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default App;
-
-import './App.css'; // Make sure to import your main CSS file if it's not already
-import ChatWindow from './components/custom/ChatWindow';
-
-function App() {
   return (
-    <div className="App">
-      <ChatWindow />
+    <div className="flex items-center justify-center min-h-screen">
+      <div
+        className="flex flex-col items-stretch w-full max-w-screen-lg border border-red-900 rounded-xl"
+        style={{
+          maxHeight: "50rem",
+        }}
+      >
+        {/* Messages container */}
+        <div className="flex flex-col flex-grow overflow-auto">
+          {messages.map((message, index) => (
+            <div className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} p-4 gap-4`} key={index}>
+              {!message.isUser && (
+                <img
+                  alt="Avatar"
+                  className="rounded-full"
+                  src={gptLogo}
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    objectFit: "cover",
+                  }}
+                />
+              )}
+              <div className="flex flex-col gap-1 min-w-0">
+                <div className="font-semibold">{message.isUser ? 'You' : 'Grace Sullivan'}</div>
+                <div className="bg-gray-100 rounded-lg p-2" style={{ maxWidth: "500px", wordWrap: "break-word" }}>{message.text}</div>
+              </div>
+              {message.isUser && (
+                <img
+                  alt="Avatar"
+                  className="rounded-full"
+                  src={userLogo}
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    objectFit: "cover",
+                  }}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Input area */}
+        <div className="p-4 border-t flex-none">
+          <form className="flex gap-4 items-end">
+            <Textarea className="flex-1 min-h-[2rem] rounded-2xl resize-none" placeholder="Type your message..." />
+            <Button variant="outline" className="rounded-full self-end" type="submit">Send</Button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
-
-export default App;
